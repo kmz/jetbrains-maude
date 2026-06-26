@@ -1,0 +1,36 @@
+<idea-plugin>
+    <id>org.maude.intellij</id>
+    <name>Maude</name>
+    <vendor>Maude</vendor>
+    <description><![CDATA[
+        Syntax highlighting and editor support for the Maude language.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType
+            name="Maude"
+            implementationClass="org.maude.intellij.MaudeFileType"
+            fieldName="INSTANCE"
+            language="Maude"
+            extensions="maude"/>
+        <lang.parserDefinition
+            language="Maude"
+            implementationClass="org.maude.intellij.MaudeParserDefinition"/>
+        <lang.syntaxHighlighterFactory
+            language="Maude"
+            implementationClass="org.maude.intellij.highlight.MaudeSyntaxHighlighterFactory"/>
+        <lang.braceMatcher
+            language="Maude"
+            implementationClass="org.maude.intellij.editor.MaudeBraceMatcher"/>
+        <lang.commenter
+            language="Maude"
+            implementationClass="org.maude.intellij.editor.MaudeCommenter"/>
+        <lang.foldingBuilder
+            language="Maude"
+            implementationClass="org.maude.intellij.editor.MaudeFoldingBuilder"/>
+        <colorSettingsPage
+            implementation="org.maude.intellij.highlight.MaudeColorSettingsPage"/>
+    </extensions>
+</idea-plugin>

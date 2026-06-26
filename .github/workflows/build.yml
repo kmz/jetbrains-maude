@@ -1,0 +1,51 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out plugin
+        uses: actions/checkout@v4
+
+      - name: Check out maude-lang/Maude (for keyword generation)
+        uses: actions/checkout@v4
+        with:
+          repository: maude-lang/Maude
+          path: maude-src
+          fetch-depth: 1
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: "17"
+          cache: gradle
+
+      - name: Regenerate keyword tables from Maude sources
+        run: python3 tools/gen-maude-keywords.py --maude-src maude-src
+
+      - name: Verify committed Maude.flex is up to date (drift detection)
+        run: |
+          if ! git diff --exit-code -- src/main/jflex/Maude.flex; then
+            echo "::error::src/main/jflex/Maude.flex is out of date with maude-lang/Maude."
+            echo "Run 'python3 tools/gen-maude-keywords.py --maude-src <Maude checkout>' and commit the result."
+            exit 1
+          fi
+
+      - name: Run tests
+        run: ./gradlew --no-daemon test
+
+      - name: Build plugin
+        run: ./gradlew --no-daemon buildPlugin
+
+      - name: Upload plugin zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: jetbrains-maude-plugin
+          path: build/distributions/*.zip
+          if-no-files-found: error
