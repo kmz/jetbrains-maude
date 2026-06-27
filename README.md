@@ -73,9 +73,12 @@ After `./gradlew runIde` opens the sandbox IDE, open a `.maude` file (e.g.
 
 ## Scope (MVP)
 
-Lexer-level features only. Not included: BNF parsing, error detection,
-completion, go-to-definition. Attribute words (`assoc`, `comm`, …) are
-highlighted wherever they appear, not only inside `[ … ]`.
+Base plugin (all IDEs, incl. Community): lexer-level highlighting, folding,
+brace matching, comment toggling. Not included in the base plugin: BNF parsing,
+completion, go-to-definition. Error detection (diagnostics) is available via the
+optional LSP integration in paid IDEs — see "LSP diagnostics" below. Attribute
+words (`assoc`, `comm`, …) are highlighted wherever they appear, not only inside
+`[ … ]`.
 
 ## LSP diagnostics (paid JetBrains IDEs)
 
