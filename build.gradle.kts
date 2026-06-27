@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2024.2")
+        intellijIdeaUltimate("2024.2")
         instrumentationTools()
         testFramework(TestFrameworkType.Platform)
     }
