@@ -9438,14 +9438,24 @@ var LIB;
 var { URI, Utils } = LIB;
 
 // server/src/server.ts
-var import_node_path3 = require("node:path");
+var import_node_path4 = require("node:path");
 var import_node_fs2 = require("node:fs");
+
+// server/src/index/maudeLib.ts
+var import_node_path = require("node:path");
+function resolveMaudeLibDir(candidates, exists) {
+  for (const dir of candidates) {
+    if (!dir) continue;
+    if (exists((0, import_node_path.join)(dir, "prelude.maude"))) return dir;
+  }
+  return void 0;
+}
 
 // server/src/diagnostics/computeDiagnostics.ts
 var import_node2 = __toESM(require_node3());
 var import_node_fs = require("node:fs");
 var import_node_os = require("node:os");
-var import_node_path = require("node:path");
+var import_node_path2 = require("node:path");
 
 // server/src/diagnostics/maudeRunner.ts
 var import_node_child_process = require("node:child_process");
@@ -9534,8 +9544,8 @@ function messagesToDiagnostics(messages, lineText) {
 // server/src/diagnostics/computeDiagnostics.ts
 async function computeDiagnostics(text, opts) {
   const run = opts.run ?? runMaude;
-  const dir = (0, import_node_fs.mkdtempSync)((0, import_node_path.join)((0, import_node_os.tmpdir)(), "maude-lsp-"));
-  const filePath = (0, import_node_path.join)(dir, "buffer.maude");
+  const dir = (0, import_node_fs.mkdtempSync)((0, import_node_path2.join)((0, import_node_os.tmpdir)(), "maude-lsp-"));
+  const filePath = (0, import_node_path2.join)(dir, "buffer.maude");
   try {
     (0, import_node_fs.writeFileSync)(filePath, text, "utf8");
     const result = await run({
@@ -9714,7 +9724,7 @@ function wordAt(text, position) {
 }
 
 // server/src/index/workspaceIndex.ts
-var import_node_path2 = require("node:path");
+var import_node_path3 = require("node:path");
 
 // server/src/index/symbolIndex.ts
 var DECL_RE = /^(\s*)(sorts?|ops?|vars?)\b(.*)$/;
@@ -9784,29 +9794,60 @@ function parseImports(text) {
 }
 
 // server/src/index/workspaceIndex.ts
+var extractCache = /* @__PURE__ */ new Map();
+function cachedExtract(absPath, src) {
+  const hit = extractCache.get(absPath);
+  if (hit && hit.mtimeMs === src.mtimeMs) return hit.symbols;
+  const symbols = extractSymbols(src.text, URI.file(absPath).toString());
+  extractCache.set(absPath, { mtimeMs: src.mtimeMs, symbols });
+  return symbols;
+}
 function buildWorkspaceIndex(entryUri, entryText, opts) {
   const maxFiles = opts.maxFiles ?? 50;
+  const libDirs = opts.libDirs ?? [];
   const symbols = [];
   const visited = /* @__PURE__ */ new Set();
   const entryPath = URI.parse(entryUri).fsPath;
   visited.add(entryPath);
-  const indexText = (uri, text, baseDir) => {
-    symbols.push(...extractSymbols(text, uri));
+  const indexFile = (absPath, srcFile) => {
+    visited.add(absPath);
+    symbols.push(...cachedExtract(absPath, srcFile));
+    indexImports(srcFile.text, (0, import_node_path3.dirname)(absPath));
+  };
+  const indexImports = (text, baseDir) => {
     for (const imp of parseImports(text)) {
       if (visited.size >= maxFiles) break;
-      const candidates = (0, import_node_path2.extname)(imp) ? [imp] : [`${imp}.maude`, imp];
-      for (const cand of candidates) {
-        const abs = (0, import_node_path2.resolve)(baseDir, cand);
-        if (visited.has(abs)) break;
-        const content = opts.readFile(abs);
-        if (content === void 0) continue;
-        visited.add(abs);
-        indexText(URI.file(abs).toString(), content, (0, import_node_path2.dirname)(abs));
-        break;
+      const dirs = [baseDir, ...libDirs];
+      let handled = false;
+      for (const d of dirs) {
+        const candidates = (0, import_node_path3.extname)(imp) ? [imp] : [`${imp}.maude`, imp];
+        for (const cand of candidates) {
+          const abs = (0, import_node_path3.resolve)(d, cand);
+          if (visited.has(abs)) {
+            handled = true;
+            break;
+          }
+          const srcFile = opts.readFile(abs);
+          if (srcFile === void 0) continue;
+          indexFile(abs, srcFile);
+          handled = true;
+          break;
+        }
+        if (handled) break;
       }
     }
   };
-  indexText(entryUri, entryText, (0, import_node_path2.dirname)(entryPath));
+  symbols.push(...extractSymbols(entryText, entryUri));
+  for (const d of libDirs) {
+    const abs = (0, import_node_path3.resolve)(d, "prelude.maude");
+    if (visited.has(abs)) break;
+    const srcFile = opts.readFile(abs);
+    if (srcFile !== void 0) {
+      indexFile(abs, srcFile);
+      break;
+    }
+  }
+  indexImports(entryText, (0, import_node_path3.dirname)(entryPath));
   const byName = /* @__PURE__ */ new Map();
   for (const s of symbols) {
     const arr = byName.get(s.name);
@@ -9860,7 +9901,7 @@ function completionItems(index) {
 // server/src/server.ts
 var connection = (0, import_node7.createConnection)(import_node7.ProposedFeatures.all);
 var documents = new import_node7.TextDocuments(TextDocument);
-var settings = { path: "maude", diagnostics: { enabled: true, timeoutMs: 5e3 } };
+var settings = { path: "maude", libPath: "", diagnostics: { enabled: true, timeoutMs: 5e3 } };
 connection.onInitialize(() => ({
   capabilities: {
     textDocumentSync: import_node7.TextDocumentSyncKind.Incremental,
@@ -9876,6 +9917,7 @@ connection.onInitialized(async () => {
   if (cfg) {
     settings = {
       path: cfg.path ?? "maude",
+      libPath: cfg.libPath ?? "",
       diagnostics: {
         enabled: cfg.diagnostics?.enabled ?? true,
         timeoutMs: cfg.diagnostics?.timeoutMs ?? 5e3
@@ -9885,12 +9927,29 @@ connection.onInitialized(async () => {
 });
 function readFileForIndex(absPath) {
   const open = documents.get(URI.file(absPath).toString());
-  if (open) return open.getText();
+  if (open) return { text: open.getText(), mtimeMs: open.version };
   try {
-    return (0, import_node_fs2.readFileSync)(absPath, "utf8");
+    return { text: (0, import_node_fs2.readFileSync)(absPath, "utf8"), mtimeMs: (0, import_node_fs2.statSync)(absPath).mtimeMs };
   } catch {
     return void 0;
   }
+}
+function maudeBinDir(maudePath) {
+  if (maudePath.includes("/")) return (0, import_node_path4.dirname)(maudePath);
+  const PATH = process.env.PATH ?? "";
+  for (const dir of PATH.split(":")) {
+    if (dir && (0, import_node_fs2.existsSync)((0, import_node_path4.join)(dir, maudePath))) return dir;
+  }
+  return void 0;
+}
+function currentLibDirs() {
+  const candidates = [];
+  if (settings.libPath) candidates.push(settings.libPath);
+  if (process.env.MAUDE_LIB) candidates.push(process.env.MAUDE_LIB);
+  const binDir = maudeBinDir(settings.path);
+  if (binDir) candidates.push((0, import_node_path4.join)(binDir, "..", "share", "maude"));
+  const lib = resolveMaudeLibDir(candidates, import_node_fs2.existsSync);
+  return lib ? [lib] : [];
 }
 connection.onDocumentSymbol(({ textDocument }) => {
   const doc = documents.get(textDocument.uri);
@@ -9905,7 +9964,7 @@ connection.onDefinition(({ textDocument, position }) => {
   if (!doc) return null;
   const word = wordAt(doc.getText(), position);
   if (!word) return null;
-  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex });
+  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex, libDirs: currentLibDirs() });
   return findDefinitions(index, word);
 });
 connection.onHover(({ textDocument, position }) => {
@@ -9913,13 +9972,13 @@ connection.onHover(({ textDocument, position }) => {
   if (!doc) return null;
   const word = wordAt(doc.getText(), position);
   if (!word) return null;
-  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex });
+  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex, libDirs: currentLibDirs() });
   return hoverFor(index, word);
 });
 connection.onCompletion(({ textDocument }) => {
   const doc = documents.get(textDocument.uri);
   if (!doc) return [];
-  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex });
+  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex, libDirs: currentLibDirs() });
   return completionItems(index);
 });
 var timers = /* @__PURE__ */ new Map();
@@ -9935,7 +9994,7 @@ function scheduleDiagnostics(doc) {
       try {
         const diagnostics = await computeDiagnostics(doc.getText(), {
           maudePath: settings.path,
-          docDir: (0, import_node_path3.dirname)(fsPath),
+          docDir: (0, import_node_path4.dirname)(fsPath),
           timeoutMs: settings.diagnostics.timeoutMs
         });
         connection.sendDiagnostics({ uri: doc.uri, diagnostics });
