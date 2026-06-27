@@ -4109,34 +4109,34 @@ var require_main2 = __commonJS({
         }
         MarkupContent2.is = is;
       })(MarkupContent || (exports3.MarkupContent = MarkupContent = {}));
-      var CompletionItemKind2;
-      (function(CompletionItemKind3) {
-        CompletionItemKind3.Text = 1;
-        CompletionItemKind3.Method = 2;
-        CompletionItemKind3.Function = 3;
-        CompletionItemKind3.Constructor = 4;
-        CompletionItemKind3.Field = 5;
-        CompletionItemKind3.Variable = 6;
-        CompletionItemKind3.Class = 7;
-        CompletionItemKind3.Interface = 8;
-        CompletionItemKind3.Module = 9;
-        CompletionItemKind3.Property = 10;
-        CompletionItemKind3.Unit = 11;
-        CompletionItemKind3.Value = 12;
-        CompletionItemKind3.Enum = 13;
-        CompletionItemKind3.Keyword = 14;
-        CompletionItemKind3.Snippet = 15;
-        CompletionItemKind3.Color = 16;
-        CompletionItemKind3.File = 17;
-        CompletionItemKind3.Reference = 18;
-        CompletionItemKind3.Folder = 19;
-        CompletionItemKind3.EnumMember = 20;
-        CompletionItemKind3.Constant = 21;
-        CompletionItemKind3.Struct = 22;
-        CompletionItemKind3.Event = 23;
-        CompletionItemKind3.Operator = 24;
-        CompletionItemKind3.TypeParameter = 25;
-      })(CompletionItemKind2 || (exports3.CompletionItemKind = CompletionItemKind2 = {}));
+      var CompletionItemKind3;
+      (function(CompletionItemKind4) {
+        CompletionItemKind4.Text = 1;
+        CompletionItemKind4.Method = 2;
+        CompletionItemKind4.Function = 3;
+        CompletionItemKind4.Constructor = 4;
+        CompletionItemKind4.Field = 5;
+        CompletionItemKind4.Variable = 6;
+        CompletionItemKind4.Class = 7;
+        CompletionItemKind4.Interface = 8;
+        CompletionItemKind4.Module = 9;
+        CompletionItemKind4.Property = 10;
+        CompletionItemKind4.Unit = 11;
+        CompletionItemKind4.Value = 12;
+        CompletionItemKind4.Enum = 13;
+        CompletionItemKind4.Keyword = 14;
+        CompletionItemKind4.Snippet = 15;
+        CompletionItemKind4.Color = 16;
+        CompletionItemKind4.File = 17;
+        CompletionItemKind4.Reference = 18;
+        CompletionItemKind4.Folder = 19;
+        CompletionItemKind4.EnumMember = 20;
+        CompletionItemKind4.Constant = 21;
+        CompletionItemKind4.Struct = 22;
+        CompletionItemKind4.Event = 23;
+        CompletionItemKind4.Operator = 24;
+        CompletionItemKind4.TypeParameter = 25;
+      })(CompletionItemKind3 || (exports3.CompletionItemKind = CompletionItemKind3 = {}));
       var InsertTextFormat;
       (function(InsertTextFormat2) {
         InsertTextFormat2.PlainText = 1;
@@ -4171,13 +4171,13 @@ var require_main2 = __commonJS({
         }
         CompletionItemLabelDetails2.is = is;
       })(CompletionItemLabelDetails || (exports3.CompletionItemLabelDetails = CompletionItemLabelDetails = {}));
-      var CompletionItem2;
-      (function(CompletionItem3) {
+      var CompletionItem3;
+      (function(CompletionItem4) {
         function create(label) {
           return { label };
         }
-        CompletionItem3.create = create;
-      })(CompletionItem2 || (exports3.CompletionItem = CompletionItem2 = {}));
+        CompletionItem4.create = create;
+      })(CompletionItem3 || (exports3.CompletionItem = CompletionItem3 = {}));
       var CompletionList;
       (function(CompletionList2) {
         function create(items, isIncomplete) {
@@ -8876,7 +8876,7 @@ var require_node3 = __commonJS({
 });
 
 // server/src/server.ts
-var import_node7 = __toESM(require_node3());
+var import_node8 = __toESM(require_node3());
 
 // node_modules/vscode-languageserver-textdocument/lib/esm/main.js
 var FullTextDocument = class _FullTextDocument {
@@ -9874,17 +9874,119 @@ function hoverFor(index, name) {
 }
 
 // server/src/features/completion.ts
+var import_node7 = __toESM(require_node3());
+
+// server/src/features/keywords.ts
 var import_node6 = __toESM(require_node3());
+var MAUDE_KEYWORDS = [
+  // module / theory / view headers and ends
+  "fmod",
+  "mod",
+  "smod",
+  "omod",
+  "fth",
+  "th",
+  "sth",
+  "oth",
+  "view",
+  "endfm",
+  "endm",
+  "endsm",
+  "endom",
+  "endfth",
+  "endth",
+  "endsth",
+  "endoth",
+  "endv",
+  // declarations
+  "sort",
+  "sorts",
+  "subsort",
+  "subsorts",
+  "op",
+  "ops",
+  "eq",
+  "ceq",
+  "rl",
+  "crl",
+  "mb",
+  "cmb",
+  "var",
+  "vars",
+  "msg",
+  "msgs",
+  "class",
+  "subclass",
+  "strat",
+  "strats",
+  // imports
+  "protecting",
+  "pr",
+  "extending",
+  "ex",
+  "including",
+  "inc",
+  "using",
+  "us",
+  // control
+  "if",
+  "then",
+  "else",
+  "fi",
+  "is",
+  "from",
+  "to",
+  // operator attributes
+  "ctor",
+  "assoc",
+  "comm",
+  "id:",
+  "idem",
+  "iter",
+  "prec",
+  "gather",
+  "frozen",
+  "owise",
+  "metadata",
+  "format",
+  "memo",
+  "special",
+  "config",
+  "object",
+  "ditto",
+  // commands
+  "reduce",
+  "rewrite",
+  "frewrite",
+  "erewrite",
+  "search",
+  "match",
+  "xmatch",
+  "unify",
+  "load",
+  "in",
+  "select",
+  "show",
+  "set",
+  "parse",
+  "trace",
+  "debug"
+];
+function keywordCompletionItems() {
+  return MAUDE_KEYWORDS.map((label) => ({ label, kind: import_node6.CompletionItemKind.Keyword }));
+}
+
+// server/src/features/completion.ts
 function kindOf(kind) {
   switch (kind) {
     case "sort":
-      return import_node6.CompletionItemKind.Class;
+      return import_node7.CompletionItemKind.Class;
     case "op":
-      return import_node6.CompletionItemKind.Function;
+      return import_node7.CompletionItemKind.Function;
     case "var":
-      return import_node6.CompletionItemKind.Variable;
+      return import_node7.CompletionItemKind.Variable;
     case "module":
-      return import_node6.CompletionItemKind.Module;
+      return import_node7.CompletionItemKind.Module;
   }
 }
 function completionItems(index) {
@@ -9895,16 +9997,21 @@ function completionItems(index) {
     seen.add(s.name);
     items.push({ label: s.name, kind: kindOf(s.kind), detail: s.detail });
   }
+  for (const kw of keywordCompletionItems()) {
+    if (seen.has(kw.label)) continue;
+    seen.add(kw.label);
+    items.push(kw);
+  }
   return items;
 }
 
 // server/src/server.ts
-var connection = (0, import_node7.createConnection)(import_node7.ProposedFeatures.all);
-var documents = new import_node7.TextDocuments(TextDocument);
+var connection = (0, import_node8.createConnection)(import_node8.ProposedFeatures.all);
+var documents = new import_node8.TextDocuments(TextDocument);
 var settings = { path: "maude", libPath: "", diagnostics: { enabled: true, timeoutMs: 5e3 } };
 connection.onInitialize(() => ({
   capabilities: {
-    textDocumentSync: import_node7.TextDocumentSyncKind.Incremental,
+    textDocumentSync: import_node8.TextDocumentSyncKind.Incremental,
     documentSymbolProvider: true,
     foldingRangeProvider: true,
     definitionProvider: true,
