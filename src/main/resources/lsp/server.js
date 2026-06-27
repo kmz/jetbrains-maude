@@ -9718,11 +9718,27 @@ var import_node_path2 = require("node:path");
 
 // server/src/index/symbolIndex.ts
 var DECL_RE = /^(\s*)(sorts?|ops?|vars?)\b(.*)$/;
+var MODULE_RE = /^(\s*)(fmod|mod|smod|omod|fth|th|sth|oth|view)(\s+)(\S+)/;
 var IDENT = /[A-Za-z][A-Za-z0-9_'?-]*/g;
 var LOAD_RE = /^\s*(?:load|in)\s+("?)([^"\s]+)\1\s*\.?\s*$/;
 function extractSymbols(text, uri) {
   const out = [];
   text.split(/\r?\n/).forEach((line, i) => {
+    const mod = MODULE_RE.exec(line);
+    if (mod) {
+      const col = mod[1].length + mod[2].length + mod[3].length;
+      out.push({
+        name: mod[4],
+        kind: "module",
+        uri,
+        detail: line.trim(),
+        range: {
+          start: { line: i, character: col },
+          end: { line: i, character: col + mod[4].length }
+        }
+      });
+      return;
+    }
     const m = DECL_RE.exec(line);
     if (!m) return;
     const kw = m[2];
@@ -9826,6 +9842,8 @@ function kindOf(kind) {
       return import_node6.CompletionItemKind.Function;
     case "var":
       return import_node6.CompletionItemKind.Variable;
+    case "module":
+      return import_node6.CompletionItemKind.Module;
   }
 }
 function completionItems(index) {
