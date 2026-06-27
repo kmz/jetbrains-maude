@@ -77,6 +77,38 @@ Lexer-level features only. Not included: BNF parsing, error detection,
 completion, go-to-definition. Attribute words (`assoc`, `comm`, …) are
 highlighted wherever they appear, not only inside `[ … ]`.
 
+## LSP diagnostics (paid JetBrains IDEs)
+
+In addition to the lexer-based highlighting/folding (which work in all IDEs,
+including Community), this plugin integrates the
+[`maude-lsp`](https://github.com/kmz/maude-lsp) language server via the native
+JetBrains LSP API to provide **diagnostics** (real `maude` errors shown as
+warnings/errors in the editor).
+
+- The LSP support is an **optional** plugin dependency: it activates only in
+  IDEs that include the LSP API (paid IDEs such as IntelliJ IDEA Ultimate).
+  Highlighting and folding still work everywhere else.
+- A prebuilt server (`src/main/resources/lsp/server.js`) is bundled, so no
+  separate install is needed beyond **Node.js** on your machine. `node` and the
+  `maude` binary are resolved from your login-shell `PATH`.
+
+### Regenerating the bundled server
+
+After changing `maude-lsp`, re-bundle the server and commit the result:
+
+```bash
+MAUDE_LSP=/path/to/maude-lsp tools/bundle-lsp-server.sh
+```
+
+(Default `MAUDE_LSP` is the sibling `../maude-lsp` checkout.)
+
+### Verifying diagnostics
+
+Install the built plugin (`build/distributions/jetbrains-maude-*.zip`) into a
+paid JetBrains IDE via `Settings → Plugins → ⚙ → Install Plugin from Disk…`,
+open a `.maude` file with a syntax/type error, and confirm an error is
+underlined. (Requires Node.js and `maude` on PATH.)
+
 ## Layout
 
 ```

@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Builds against IDEA Ultimate (LSP API); the LSP support is an optional plugin dependency.
     steps:
       - name: Check out plugin
         uses: actions/checkout@v4
