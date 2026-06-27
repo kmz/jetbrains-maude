@@ -9700,7 +9700,7 @@ function computeFoldingRanges(text) {
 }
 
 // server/src/text/wordAt.ts
-var IDENT_CHAR = /[A-Za-z0-9_'?]/;
+var IDENT_CHAR = /[A-Za-z0-9_'?-]/;
 function wordAt(text, position) {
   const line = text.split(/\r?\n/)[position.line];
   if (line === void 0) return null;
@@ -9709,7 +9709,7 @@ function wordAt(text, position) {
   let end = position.character;
   while (start > 0 && IDENT_CHAR.test(line[start - 1])) start--;
   while (end < line.length && IDENT_CHAR.test(line[end])) end++;
-  const word = line.slice(start, end);
+  const word = line.slice(start, end).replace(/^-+/, "").replace(/-+$/, "");
   return /^[A-Za-z]/.test(word) ? word : null;
 }
 
@@ -9718,7 +9718,7 @@ var import_node_path2 = require("node:path");
 
 // server/src/index/symbolIndex.ts
 var DECL_RE = /^(\s*)(sorts?|ops?|vars?)\b(.*)$/;
-var IDENT = /[A-Za-z][A-Za-z0-9_'?]*/g;
+var IDENT = /[A-Za-z][A-Za-z0-9_'?-]*/g;
 var LOAD_RE = /^\s*(?:load|in)\s+("?)([^"\s]+)\1\s*\.?\s*$/;
 function extractSymbols(text, uri) {
   const out = [];
