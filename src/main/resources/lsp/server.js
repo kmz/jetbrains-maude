@@ -9741,7 +9741,8 @@ function extractSymbols(text, uri) {
     IDENT.lastIndex = 0;
     let mm;
     while ((mm = IDENT.exec(namesPart)) !== null) {
-      const name = mm[0];
+      const name = mm[0].replace(/-+$/, "");
+      if (!name) continue;
       const col = afterKw + mm.index;
       out.push({
         name,
