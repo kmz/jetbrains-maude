@@ -4091,52 +4091,52 @@ var require_main2 = __commonJS({
         }
         TextDocumentItem2.is = is;
       })(TextDocumentItem || (exports3.TextDocumentItem = TextDocumentItem = {}));
-      var MarkupKind;
-      (function(MarkupKind2) {
-        MarkupKind2.PlainText = "plaintext";
-        MarkupKind2.Markdown = "markdown";
+      var MarkupKind2;
+      (function(MarkupKind3) {
+        MarkupKind3.PlainText = "plaintext";
+        MarkupKind3.Markdown = "markdown";
         function is(value) {
           var candidate = value;
-          return candidate === MarkupKind2.PlainText || candidate === MarkupKind2.Markdown;
+          return candidate === MarkupKind3.PlainText || candidate === MarkupKind3.Markdown;
         }
-        MarkupKind2.is = is;
-      })(MarkupKind || (exports3.MarkupKind = MarkupKind = {}));
+        MarkupKind3.is = is;
+      })(MarkupKind2 || (exports3.MarkupKind = MarkupKind2 = {}));
       var MarkupContent;
       (function(MarkupContent2) {
         function is(value) {
           var candidate = value;
-          return Is.objectLiteral(value) && MarkupKind.is(candidate.kind) && Is.string(candidate.value);
+          return Is.objectLiteral(value) && MarkupKind2.is(candidate.kind) && Is.string(candidate.value);
         }
         MarkupContent2.is = is;
       })(MarkupContent || (exports3.MarkupContent = MarkupContent = {}));
-      var CompletionItemKind;
-      (function(CompletionItemKind2) {
-        CompletionItemKind2.Text = 1;
-        CompletionItemKind2.Method = 2;
-        CompletionItemKind2.Function = 3;
-        CompletionItemKind2.Constructor = 4;
-        CompletionItemKind2.Field = 5;
-        CompletionItemKind2.Variable = 6;
-        CompletionItemKind2.Class = 7;
-        CompletionItemKind2.Interface = 8;
-        CompletionItemKind2.Module = 9;
-        CompletionItemKind2.Property = 10;
-        CompletionItemKind2.Unit = 11;
-        CompletionItemKind2.Value = 12;
-        CompletionItemKind2.Enum = 13;
-        CompletionItemKind2.Keyword = 14;
-        CompletionItemKind2.Snippet = 15;
-        CompletionItemKind2.Color = 16;
-        CompletionItemKind2.File = 17;
-        CompletionItemKind2.Reference = 18;
-        CompletionItemKind2.Folder = 19;
-        CompletionItemKind2.EnumMember = 20;
-        CompletionItemKind2.Constant = 21;
-        CompletionItemKind2.Struct = 22;
-        CompletionItemKind2.Event = 23;
-        CompletionItemKind2.Operator = 24;
-        CompletionItemKind2.TypeParameter = 25;
-      })(CompletionItemKind || (exports3.CompletionItemKind = CompletionItemKind = {}));
+      var CompletionItemKind2;
+      (function(CompletionItemKind3) {
+        CompletionItemKind3.Text = 1;
+        CompletionItemKind3.Method = 2;
+        CompletionItemKind3.Function = 3;
+        CompletionItemKind3.Constructor = 4;
+        CompletionItemKind3.Field = 5;
+        CompletionItemKind3.Variable = 6;
+        CompletionItemKind3.Class = 7;
+        CompletionItemKind3.Interface = 8;
+        CompletionItemKind3.Module = 9;
+        CompletionItemKind3.Property = 10;
+        CompletionItemKind3.Unit = 11;
+        CompletionItemKind3.Value = 12;
+        CompletionItemKind3.Enum = 13;
+        CompletionItemKind3.Keyword = 14;
+        CompletionItemKind3.Snippet = 15;
+        CompletionItemKind3.Color = 16;
+        CompletionItemKind3.File = 17;
+        CompletionItemKind3.Reference = 18;
+        CompletionItemKind3.Folder = 19;
+        CompletionItemKind3.EnumMember = 20;
+        CompletionItemKind3.Constant = 21;
+        CompletionItemKind3.Struct = 22;
+        CompletionItemKind3.Event = 23;
+        CompletionItemKind3.Operator = 24;
+        CompletionItemKind3.TypeParameter = 25;
+      })(CompletionItemKind2 || (exports3.CompletionItemKind = CompletionItemKind2 = {}));
       var InsertTextFormat;
       (function(InsertTextFormat2) {
         InsertTextFormat2.PlainText = 1;
@@ -4171,13 +4171,13 @@ var require_main2 = __commonJS({
         }
         CompletionItemLabelDetails2.is = is;
       })(CompletionItemLabelDetails || (exports3.CompletionItemLabelDetails = CompletionItemLabelDetails = {}));
-      var CompletionItem;
-      (function(CompletionItem2) {
+      var CompletionItem2;
+      (function(CompletionItem3) {
         function create(label) {
           return { label };
         }
-        CompletionItem2.create = create;
-      })(CompletionItem || (exports3.CompletionItem = CompletionItem = {}));
+        CompletionItem3.create = create;
+      })(CompletionItem2 || (exports3.CompletionItem = CompletionItem2 = {}));
       var CompletionList;
       (function(CompletionList2) {
         function create(items, isIncomplete) {
@@ -4197,14 +4197,14 @@ var require_main2 = __commonJS({
         }
         MarkedString2.is = is;
       })(MarkedString || (exports3.MarkedString = MarkedString = {}));
-      var Hover;
-      (function(Hover2) {
+      var Hover2;
+      (function(Hover3) {
         function is(value) {
           var candidate = value;
           return !!candidate && Is.objectLiteral(candidate) && (MarkupContent.is(candidate.contents) || MarkedString.is(candidate.contents) || Is.typedArray(candidate.contents, MarkedString.is)) && (value.range === void 0 || Range3.is(value.range));
         }
-        Hover2.is = is;
-      })(Hover || (exports3.Hover = Hover = {}));
+        Hover3.is = is;
+      })(Hover2 || (exports3.Hover = Hover2 = {}));
       var ParameterInformation;
       (function(ParameterInformation2) {
         function create(label, documentation) {
@@ -8876,7 +8876,7 @@ var require_node3 = __commonJS({
 });
 
 // server/src/server.ts
-var import_node5 = __toESM(require_node3());
+var import_node7 = __toESM(require_node3());
 
 // node_modules/vscode-languageserver-textdocument/lib/esm/main.js
 var FullTextDocument = class _FullTextDocument {
@@ -9438,7 +9438,8 @@ var LIB;
 var { URI, Utils } = LIB;
 
 // server/src/server.ts
-var import_node_path2 = require("node:path");
+var import_node_path3 = require("node:path");
+var import_node_fs2 = require("node:fs");
 
 // server/src/diagnostics/computeDiagnostics.ts
 var import_node2 = __toESM(require_node3());
@@ -9698,15 +9699,157 @@ function computeFoldingRanges(text) {
   return ranges;
 }
 
+// server/src/text/wordAt.ts
+var IDENT_CHAR = /[A-Za-z0-9_'?]/;
+function wordAt(text, position) {
+  const line = text.split(/\r?\n/)[position.line];
+  if (line === void 0) return null;
+  if (!IDENT_CHAR.test(line[position.character])) return null;
+  let start = position.character;
+  let end = position.character;
+  while (start > 0 && IDENT_CHAR.test(line[start - 1])) start--;
+  while (end < line.length && IDENT_CHAR.test(line[end])) end++;
+  const word = line.slice(start, end);
+  return /^[A-Za-z]/.test(word) ? word : null;
+}
+
+// server/src/index/workspaceIndex.ts
+var import_node_path2 = require("node:path");
+
+// server/src/index/symbolIndex.ts
+var DECL_RE = /^(\s*)(sorts?|ops?|vars?)\b(.*)$/;
+var IDENT = /[A-Za-z][A-Za-z0-9_'?]*/g;
+var LOAD_RE = /^\s*(?:load|in)\s+("?)([^"\s]+)\1\s*\.?\s*$/;
+function extractSymbols(text, uri) {
+  const out = [];
+  text.split(/\r?\n/).forEach((line, i) => {
+    const m = DECL_RE.exec(line);
+    if (!m) return;
+    const kw = m[2];
+    const kind = kw.startsWith("sort") ? "sort" : kw.startsWith("op") ? "op" : "var";
+    const afterKw = m[1].length + m[2].length;
+    const rest = m[3];
+    let segEnd = rest.length;
+    if (kind === "op" || kind === "var") {
+      const colon = rest.indexOf(":");
+      if (colon >= 0) segEnd = colon;
+    } else {
+      const dot = rest.indexOf(" .");
+      if (dot >= 0) segEnd = dot;
+    }
+    const namesPart = rest.slice(0, segEnd);
+    IDENT.lastIndex = 0;
+    let mm;
+    while ((mm = IDENT.exec(namesPart)) !== null) {
+      const name = mm[0];
+      const col = afterKw + mm.index;
+      out.push({
+        name,
+        kind,
+        uri,
+        detail: line.trim(),
+        range: {
+          start: { line: i, character: col },
+          end: { line: i, character: col + name.length }
+        }
+      });
+    }
+  });
+  return out;
+}
+function parseImports(text) {
+  const out = [];
+  for (const line of text.split(/\r?\n/)) {
+    const m = LOAD_RE.exec(line);
+    if (m) out.push(m[2]);
+  }
+  return out;
+}
+
+// server/src/index/workspaceIndex.ts
+function buildWorkspaceIndex(entryUri, entryText, opts) {
+  const maxFiles = opts.maxFiles ?? 50;
+  const symbols = [];
+  const visited = /* @__PURE__ */ new Set();
+  const entryPath = URI.parse(entryUri).fsPath;
+  visited.add(entryPath);
+  const indexText = (uri, text, baseDir) => {
+    symbols.push(...extractSymbols(text, uri));
+    for (const imp of parseImports(text)) {
+      if (visited.size >= maxFiles) break;
+      const candidates = (0, import_node_path2.extname)(imp) ? [imp] : [`${imp}.maude`, imp];
+      for (const cand of candidates) {
+        const abs = (0, import_node_path2.resolve)(baseDir, cand);
+        if (visited.has(abs)) break;
+        const content = opts.readFile(abs);
+        if (content === void 0) continue;
+        visited.add(abs);
+        indexText(URI.file(abs).toString(), content, (0, import_node_path2.dirname)(abs));
+        break;
+      }
+    }
+  };
+  indexText(entryUri, entryText, (0, import_node_path2.dirname)(entryPath));
+  const byName = /* @__PURE__ */ new Map();
+  for (const s of symbols) {
+    const arr = byName.get(s.name);
+    if (arr) arr.push(s);
+    else byName.set(s.name, [s]);
+  }
+  return { symbols, byName };
+}
+
+// server/src/features/definition.ts
+function findDefinitions(index, name) {
+  return (index.byName.get(name) ?? []).map((s) => ({ uri: s.uri, range: s.range }));
+}
+
+// server/src/features/hover.ts
+var import_node5 = __toESM(require_node3());
+function hoverFor(index, name) {
+  const syms = index.byName.get(name);
+  if (!syms || syms.length === 0) return null;
+  const lines = Array.from(new Set(syms.map((s) => s.detail)));
+  return {
+    contents: { kind: import_node5.MarkupKind.Markdown, value: "```maude\n" + lines.join("\n") + "\n```" }
+  };
+}
+
+// server/src/features/completion.ts
+var import_node6 = __toESM(require_node3());
+function kindOf(kind) {
+  switch (kind) {
+    case "sort":
+      return import_node6.CompletionItemKind.Class;
+    case "op":
+      return import_node6.CompletionItemKind.Function;
+    case "var":
+      return import_node6.CompletionItemKind.Variable;
+  }
+}
+function completionItems(index) {
+  const seen = /* @__PURE__ */ new Set();
+  const items = [];
+  for (const s of index.symbols) {
+    if (seen.has(s.name)) continue;
+    seen.add(s.name);
+    items.push({ label: s.name, kind: kindOf(s.kind), detail: s.detail });
+  }
+  return items;
+}
+
 // server/src/server.ts
-var connection = (0, import_node5.createConnection)(import_node5.ProposedFeatures.all);
-var documents = new import_node5.TextDocuments(TextDocument);
+var connection = (0, import_node7.createConnection)(import_node7.ProposedFeatures.all);
+var documents = new import_node7.TextDocuments(TextDocument);
 var settings = { path: "maude", diagnostics: { enabled: true, timeoutMs: 5e3 } };
 connection.onInitialize(() => ({
   capabilities: {
-    textDocumentSync: import_node5.TextDocumentSyncKind.Incremental,
+    textDocumentSync: import_node7.TextDocumentSyncKind.Incremental,
     documentSymbolProvider: true,
-    foldingRangeProvider: true
+    foldingRangeProvider: true,
+    definitionProvider: true,
+    hoverProvider: true,
+    completionProvider: { triggerCharacters: [] }
   }
 }));
 connection.onInitialized(async () => {
@@ -9721,6 +9864,15 @@ connection.onInitialized(async () => {
     };
   }
 });
+function readFileForIndex(absPath) {
+  const open = documents.get(URI.file(absPath).toString());
+  if (open) return open.getText();
+  try {
+    return (0, import_node_fs2.readFileSync)(absPath, "utf8");
+  } catch {
+    return void 0;
+  }
+}
 connection.onDocumentSymbol(({ textDocument }) => {
   const doc = documents.get(textDocument.uri);
   return doc ? computeDocumentSymbols(doc.getText()) : [];
@@ -9728,6 +9880,28 @@ connection.onDocumentSymbol(({ textDocument }) => {
 connection.onFoldingRanges(({ textDocument }) => {
   const doc = documents.get(textDocument.uri);
   return doc ? computeFoldingRanges(doc.getText()) : [];
+});
+connection.onDefinition(({ textDocument, position }) => {
+  const doc = documents.get(textDocument.uri);
+  if (!doc) return null;
+  const word = wordAt(doc.getText(), position);
+  if (!word) return null;
+  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex });
+  return findDefinitions(index, word);
+});
+connection.onHover(({ textDocument, position }) => {
+  const doc = documents.get(textDocument.uri);
+  if (!doc) return null;
+  const word = wordAt(doc.getText(), position);
+  if (!word) return null;
+  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex });
+  return hoverFor(index, word);
+});
+connection.onCompletion(({ textDocument }) => {
+  const doc = documents.get(textDocument.uri);
+  if (!doc) return [];
+  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex });
+  return completionItems(index);
 });
 var timers = /* @__PURE__ */ new Map();
 function scheduleDiagnostics(doc) {
@@ -9742,7 +9916,7 @@ function scheduleDiagnostics(doc) {
       try {
         const diagnostics = await computeDiagnostics(doc.getText(), {
           maudePath: settings.path,
-          docDir: (0, import_node_path2.dirname)(fsPath),
+          docDir: (0, import_node_path3.dirname)(fsPath),
           timeoutMs: settings.diagnostics.timeoutMs
         });
         connection.sendDiagnostics({ uri: doc.uri, diagnostics });
