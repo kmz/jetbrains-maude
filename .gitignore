@@ -4,3 +4,4 @@ build/
 # Local Maude checkout used only to regenerate keyword tables
 maude-src/
 *.tsbuildinfo
+.idea/
