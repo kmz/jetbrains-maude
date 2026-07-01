@@ -13,6 +13,9 @@ class MaudeLspServerDescriptor(project: Project) :
 
     override fun isSupportedFile(file: VirtualFile): Boolean = file.extension == "maude"
 
+    override val lspGoToDefinitionSupport: Boolean get() = true
+    override val lspHoverSupport: Boolean get() = true
+
     override fun createCommandLine(): GeneralCommandLine =
         GeneralCommandLine("node", unpackServer(), "--stdio")
             .withEnvironment(EnvironmentUtil.getEnvironmentMap())
