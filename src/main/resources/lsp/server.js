@@ -9727,26 +9727,50 @@ function wordAt(text, position) {
 var import_node_path3 = require("node:path");
 
 // server/src/index/symbolIndex.ts
+var MODULE_RE = /^(\s*)(fmod|mod|smod|omod|fth|th|sth|oth|view)(\s+)([^\s{]+)/;
+var END_RE = /^\s*(endfm|endm|endsm|endom|endo|endfth|endth|endsth|endoth|endv)\b/;
 var DECL_RE = /^(\s*)(sorts?|ops?|vars?)\b(.*)$/;
-var MODULE_RE = /^(\s*)(fmod|mod|smod|omod|fth|th|sth|oth|view)(\s+)(\S+)/;
 var IDENT = /[A-Za-z][A-Za-z0-9_'?-]*/g;
+var PARAM_HEAD = /^(\s*)([A-Za-z][A-Za-z0-9_'?-]*)/;
 var LOAD_RE = /^\s*(?:load|in)\s+("?)([^"\s]+)\1\s*\.?\s*$/;
+function lineRange2(line, col, len) {
+  return { start: { line, character: col }, end: { line, character: col + len } };
+}
 function extractSymbols(text, uri) {
   const out = [];
+  let currentModule;
   text.split(/\r?\n/).forEach((line, i) => {
     const mod = MODULE_RE.exec(line);
     if (mod) {
       const col = mod[1].length + mod[2].length + mod[3].length;
-      out.push({
-        name: mod[4],
-        kind: "module",
-        uri,
-        detail: line.trim(),
-        range: {
-          start: { line: i, character: col },
-          end: { line: i, character: col + mod[4].length }
+      const name = mod[4];
+      out.push({ name, kind: "module", uri, detail: line.trim(), range: lineRange2(i, col, name.length) });
+      currentModule = name;
+      const braceIdx = line.indexOf("{");
+      if (braceIdx >= 0) {
+        const close = line.indexOf("}", braceIdx);
+        const inner = line.slice(braceIdx + 1, close < 0 ? line.length : close);
+        let segStart = braceIdx + 1;
+        for (const seg of inner.split(",")) {
+          const pm = PARAM_HEAD.exec(seg);
+          if (pm) {
+            const pcol = segStart + pm[1].length;
+            out.push({
+              name: pm[2],
+              kind: "param",
+              uri,
+              detail: line.trim(),
+              range: lineRange2(i, pcol, pm[2].length),
+              module: name
+            });
+          }
+          segStart += seg.length + 1;
         }
-      });
+      }
+      return;
+    }
+    if (END_RE.test(line)) {
+      currentModule = void 0;
       return;
     }
     const m = DECL_RE.exec(line);
@@ -9767,6 +9791,9 @@ function extractSymbols(text, uri) {
     IDENT.lastIndex = 0;
     let mm;
     while ((mm = IDENT.exec(namesPart)) !== null) {
+      const before = namesPart.slice(0, mm.index);
+      const depth = before.split("{").length - 1 - (before.split("}").length - 1);
+      if (depth > 0) continue;
       const name = mm[0].replace(/-+$/, "");
       if (!name) continue;
       const col = afterKw + mm.index;
@@ -9775,14 +9802,26 @@ function extractSymbols(text, uri) {
         kind,
         uri,
         detail: line.trim(),
-        range: {
-          start: { line: i, character: col },
-          end: { line: i, character: col + name.length }
-        }
+        range: lineRange2(i, col, name.length),
+        module: currentModule
       });
     }
   });
   return out;
+}
+function enclosingModule(text, line) {
+  const lines = text.split(/\r?\n/);
+  const upto = Math.min(line, lines.length - 1);
+  let current;
+  for (let i = 0; i <= upto; i++) {
+    const mod = MODULE_RE.exec(lines[i]);
+    if (mod) {
+      current = mod[4];
+      continue;
+    }
+    if (END_RE.test(lines[i]) && i < line) current = void 0;
+  }
+  return current;
 }
 function parseImports(text) {
   const out = [];
@@ -9858,8 +9897,10 @@ function buildWorkspaceIndex(entryUri, entryText, opts) {
 }
 
 // server/src/features/definition.ts
-function findDefinitions(index, name) {
-  return (index.byName.get(name) ?? []).map((s) => ({ uri: s.uri, range: s.range }));
+function findDefinitions(index, name, scopeModule) {
+  const syms = index.byName.get(name) ?? [];
+  const chosen = scopeModule && syms.some((s) => s.module === scopeModule) ? syms.filter((s) => s.module === scopeModule) : syms;
+  return chosen.map((s) => ({ uri: s.uri, range: s.range }));
 }
 
 // server/src/features/hover.ts
@@ -9987,6 +10028,8 @@ function kindOf(kind) {
       return import_node7.CompletionItemKind.Variable;
     case "module":
       return import_node7.CompletionItemKind.Module;
+    case "param":
+      return import_node7.CompletionItemKind.TypeParameter;
   }
 }
 function completionItems(index) {
@@ -10071,8 +10114,12 @@ connection.onDefinition(({ textDocument, position }) => {
   if (!doc) return null;
   const word = wordAt(doc.getText(), position);
   if (!word) return null;
-  const index = buildWorkspaceIndex(doc.uri, doc.getText(), { readFile: readFileForIndex, libDirs: currentLibDirs() });
-  return findDefinitions(index, word);
+  const index = buildWorkspaceIndex(doc.uri, doc.getText(), {
+    readFile: readFileForIndex,
+    libDirs: currentLibDirs()
+  });
+  const scope = enclosingModule(doc.getText(), position.line);
+  return findDefinitions(index, word, scope);
 });
 connection.onHover(({ textDocument, position }) => {
   const doc = documents.get(textDocument.uri);
