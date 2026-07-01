@@ -1,0 +1,66 @@
+name: release
+
+# Publishes the plugin to the JetBrains Marketplace.
+# Triggered by pushing a version tag (e.g. `git tag v0.1.0 && git push --tags`),
+# or manually via the Actions tab. The published version is whatever is set in
+# build.gradle.kts — bump it and update <change-notes> before tagging.
+# The first upload goes through Marketplace moderation.
+#
+# Required secrets:
+#   PUBLISH_TOKEN          JetBrains Marketplace permanent token
+#   CERTIFICATE_CHAIN      signing certificate chain (contents of chain.crt)
+#   PRIVATE_KEY            signing private key (contents of private.pem)
+#   PRIVATE_KEY_PASSWORD   password for the private key
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Builds against IDEA Ultimate (LSP API); the LSP support is an optional plugin dependency.
+    steps:
+      - name: Check out plugin
+        uses: actions/checkout@v4
+
+      - name: Check out maude-lang/Maude (for keyword generation)
+        uses: actions/checkout@v4
+        with:
+          repository: maude-lang/Maude
+          path: maude-src
+          fetch-depth: 1
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: "17"
+          cache: gradle
+
+      - name: Regenerate keyword tables from Maude sources
+        run: python3 tools/gen-maude-keywords.py --maude-src maude-src
+
+      - name: Verify committed Maude.flex is up to date (drift detection)
+        run: |
+          if ! git diff --exit-code -- src/main/jflex/Maude.flex; then
+            echo "::error::src/main/jflex/Maude.flex is out of date with maude-lang/Maude."
+            echo "Run 'python3 tools/gen-maude-keywords.py --maude-src <Maude checkout>' and commit the result."
+            exit 1
+          fi
+
+      - name: Run tests
+        run: ./gradlew --no-daemon test
+
+      - name: Publish to JetBrains Marketplace
+        run: ./gradlew --no-daemon publishPlugin
+        env:
+          PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+          CERTIFICATE_CHAIN: ${{ secrets.CERTIFICATE_CHAIN }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
