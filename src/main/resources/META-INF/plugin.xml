@@ -1,10 +1,23 @@
 <idea-plugin>
-    <id>org.maude.intellij</id>
-    <name>Maude</name>
-    <vendor>Maude</vendor>
+    <id>io.github.kmz.maude</id>
+    <name>Maude Language Support</name>
+    <vendor url="https://github.com/kmz/jetbrains-maude">kmz</vendor>
     <description><![CDATA[
-        Syntax highlighting and editor support for the Maude language.
+        Language support for the <a href="https://maude.cs.illinois.edu/">Maude</a>
+        system.
+        <ul>
+          <li><b>All IDEs:</b> syntax highlighting, code folding, brace matching,
+              and comment toggling for <code>.maude</code> files.</li>
+          <li><b>Diagnostics, go-to-definition, hover and completion</b> via the
+              bundled Maude language server. These activate in IDEs that include
+              the LSP API (paid IDEs such as IntelliJ IDEA Ultimate) and require
+              <b>Node.js</b> and the <b>maude</b> executable on your PATH.</li>
+        </ul>
     ]]></description>
+    <change-notes><![CDATA[
+        <b>0.1.0</b> — Initial release: highlighting, folding, and (in paid IDEs)
+        LSP diagnostics, go-to-definition, hover, and completion.
+    ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
     <depends optional="true" config-file="maude-lsp.xml">com.intellij.modules.ultimate</depends>
