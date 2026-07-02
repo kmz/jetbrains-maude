@@ -5,3 +5,7 @@ build/
 maude-src/
 *.tsbuildinfo
 .idea/
+# Plugin signing key/cert — never commit. Store in a password manager (1Password).
+private.pem
+chain.crt
+*.pem
