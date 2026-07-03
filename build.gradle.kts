@@ -21,6 +21,7 @@ dependencies {
         intellijIdeaUltimate("2024.2")
         instrumentationTools()
         testFramework(TestFrameworkType.Platform)
+        zipSigner()
     }
     testImplementation("junit:junit:4.13.2")
     testRuntimeOnly("org.opentest4j:opentest4j:1.3.0")
