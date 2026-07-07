@@ -15,6 +15,8 @@
         </ul>
     ]]></description>
     <change-notes><![CDATA[
+        <b>0.1.1</b> — Maintenance release; no functional changes.
+        <br/>
         <b>0.1.0</b> — Initial release: highlighting, folding, and (in paid IDEs)
         LSP diagnostics, go-to-definition, hover, and completion.
     ]]></change-notes>
